@@ -47,9 +47,22 @@ type Ratings struct {
 // MovieNight represents MovieNight domain model
 type MovieNight struct {
 	Base
-	WeekNumber      int
-	SelectedMovie   Movie   `json:"Selected_Movie,omitempty"`
-	SuggestedMovies []Movie `json:"Suggested_Movies,omitempty"`
-	Date            string  `json:"Date"`
-	Host            User    `json:"Host"`
+	WeekNumber      int     `json:"week_number"`
+	SelectedMovie   *Movie  `json:"selected_movie,omitempty"`
+	SuggestedMovies []Movie `json:"suggested_movies,omitempty"`
+	Date            string  `json:"date"`
+	Host            *User   `json:"host,omitempty"`
+	RSVP            []User  `json:"rsvp,omitempty"`
+}
+
+func (m *MovieNight) UpdateHost(host *User) {
+	m.Host = host
+}
+
+func (m *MovieNight) UpdateRSVP(user User) {
+	if m.RSVP == nil {
+		m.RSVP = make([]User, 0)
+	}
+
+	m.RSVP = append(m.RSVP, user) //////////////////////////////////////////////////////////////////////////////////////////////
 }

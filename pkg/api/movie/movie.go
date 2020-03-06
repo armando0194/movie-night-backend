@@ -1,8 +1,6 @@
 package movie
 
 import (
-	"fmt"
-
 	"github.com/armando0194/movie-night-backend/pkg/utl/model"
 	"github.com/gin-gonic/gin"
 )
@@ -26,7 +24,6 @@ func (u *Movie) Vote(c *gin.Context, id int) error {
 	}
 
 	movie.IncrementVote()
-	fmt.Printf("%#v", movie)
 	return u.mdb.Update(u.db, movie)
 }
 
