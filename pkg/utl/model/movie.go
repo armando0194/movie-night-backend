@@ -3,40 +3,45 @@ package model
 // Movie represents movie domain model
 type Movie struct {
 	Base
-	Seen       bool
-	Votes      int       `json:"Votes"`
-	Title      string    `json:"Title"`
-	Year       string    `json:"Year,omitempty"`
-	Rated      string    `json:"Rated,omitempty"`
-	Released   string    `json:"Released,omitempty"`
-	Runtime    string    `json:"Runtime,omitempty"`
-	Genre      string    `json:"Genre,omitempty"`
-	Director   string    `json:"Director,omitempty"`
-	Writer     string    `json:"Writer,omitempty"`
-	Actors     string    `json:"Actors,omitempty"`
-	Plot       string    `json:"Plot,omitempty"`
-	Language   string    `json:"Language,omitempty"`
-	Country    string    `json:"Country,omitempty"`
-	Awards     string    `json:"Awards,omitempty"`
-	Poster     string    `json:"Poster,omitempty" `
-	Ratings    []Ratings `json:"Ratings,omitempty"`
-	Metascore  string    `json:"Metascore,omitempty"`
-	ImdbRating string    `json:"imdbRating,omitempty"`
-	ImdbVotes  string    `json:"imdbVotes,omitempty"`
-	ImdbID     string    `json:"imdbID,omitempty"`
-	Type       string    `json:"Type,omitempty"`
-	DVD        string    `json:"DVD,omitempty"`
-	BoxOffice  string    `json:"BoxOffice,omitempty"`
-	Production string    `json:"Production,omitempty"`
-	Website    string    `json:"Website,omitempty"`
-	Response   string    `json:"Response,omitempty"`
+	Seen       string    `json:"seen" pg:"default:false,notnull"`
+	Votes      int       `json:"votes" pg:"default:0"`
+	Title      string    `json:"title"`
+	Year       string    `json:"year,omitempty"`
+	Rated      string    `json:"rated,omitempty"`
+	Released   string    `json:"released,omitempty"`
+	Runtime    string    `json:"runtime,omitempty"`
+	Genre      string    `json:"genre,omitempty"`
+	Director   string    `json:"director,omitempty"`
+	Writer     string    `json:"writer,omitempty"`
+	Actors     string    `json:"actors,omitempty"`
+	Plot       string    `json:"plot,omitempty"`
+	Language   string    `json:"language,omitempty"`
+	Country    string    `json:"country,omitempty"`
+	Awards     string    `json:"awards,omitempty"`
+	Poster     string    `json:"poster,omitempty" `
+	Ratings    []Ratings `json:"ratings,omitempty"`
+	Metascore  string    `json:"metascore,omitempty"`
+	ImdbRating string    `json:"imdb_rating,omitempty"`
+	ImdbVotes  string    `json:"imdb_votes,omitempty"`
+	ImdbID     string    `json:"imdb_id,omitempty"`
+	Type       string    `json:"type,omitempty"`
+	DVD        string    `json:"dvd,omitempty"`
+	BoxOffice  string    `json:"box_office,omitempty"`
+	Production string    `json:"production,omitempty"`
+	Website    string    `json:"website,omitempty"`
+	Response   string    `json:"response,omitempty"`
+}
+
+// IncrementVote adds 1 to the field votes
+func (m *Movie) IncrementVote() {
+	m.Votes = m.Votes + 1
 }
 
 // Ratings represents rating domain model
 type Ratings struct {
 	Base
-	Source string `json:"Source,omitempty"`
-	Value  string `json:"Value,omitempty"`
+	Source string `json:"source,omitempty"`
+	Value  string `json:"value,omitempty"`
 }
 
 // MovieNight represents MovieNight domain model
@@ -45,6 +50,6 @@ type MovieNight struct {
 	WeekNumber      int
 	SelectedMovie   Movie   `json:"Selected_Movie,omitempty"`
 	SuggestedMovies []Movie `json:"Suggested_Movies,omitempty"`
-	Date            string  `json:"date"`
+	Date            string  `json:"Date"`
 	Host            User    `json:"Host"`
 }

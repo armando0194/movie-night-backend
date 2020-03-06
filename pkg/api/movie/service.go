@@ -13,8 +13,8 @@ type Service interface {
 	Create(*gin.Context, model.Movie) (*model.Movie, error)
 	List(*gin.Context, bool, *model.Pagination) ([]model.Movie, error)
 	// View(*gin.Context, int) (*model.Movie, error)
-	// Delete(*gin.Context, int) error
-	// Update(*gin.Context, *Update) (*model.Movie, error)
+	Delete(*gin.Context, int) error
+	Vote(*gin.Context, int) error
 }
 
 // New creates new Movie application service
@@ -36,8 +36,9 @@ type Movie struct {
 // MDB represents Movie repository interface
 type MDB interface {
 	Create(orm.DB, model.Movie) (*model.Movie, error)
-	// View(orm.DB, int) (*model.Movie, error)
+	View(orm.DB, int) (*model.Movie, error)
 	List(orm.DB, bool, *model.Pagination) ([]model.Movie, error)
-	// Update(orm.DB, *model.Movie) error
-	// Delete(orm.DB, *model.Movie) error
+	// Vote(orm.DB, *model.Movie) error
+	Update(orm.DB, *model.Movie) error
+	Delete(orm.DB, *model.Movie) error
 }
