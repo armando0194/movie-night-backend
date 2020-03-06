@@ -29,10 +29,10 @@ func NewHTTP(svc movie.Service, er *gin.RouterGroup) {
 	//  500: err
 	ur.POST("", h.create)
 
-	// swagger:operation GET /v1/users users listUsers
+	// swagger:operation GET /v1/movie movie listMovies
 	// ---
-	// summary: Returns list of users.
-	// description: Returns list of users. Depending on the user role requesting it, it may return all users for SuperAdmin/Admin users, all company/location users for Company/Location admins, and an error for non-admin users.
+	// summary: Returns list of movies.
+	// description: Returns list of movies.
 	// parameters:
 	// - name: limit
 	//   in: query
@@ -43,6 +43,11 @@ func NewHTTP(svc movie.Service, er *gin.RouterGroup) {
 	//   in: query
 	//   description: page number
 	//   type: int
+	//   required: false
+	// - name: seen
+	//   in: query
+	//   description: seen flag
+	//   type: bool
 	//   required: false
 	// responses:
 	//   "200":
@@ -109,7 +114,7 @@ func NewHTTP(svc movie.Service, er *gin.RouterGroup) {
 	//     "$ref": "#/responses/err"
 	//   "500":
 	//     "$ref": "#/responses/err"
-	// ur.PATCH("/:id", h.update)
+	ur.PUT("vote/:id", h.vote)
 
 	// swagger:operation DELETE /v1/users/{id} users userDelete
 	// ---
@@ -132,7 +137,7 @@ func NewHTTP(svc movie.Service, er *gin.RouterGroup) {
 	//     "$ref": "#/responses/err"
 	//   "500":
 	//     "$ref": "#/responses/err"
-	// ur.DELETE("/:id", h.delete)
+	ur.DELETE("/:id", h.delete)
 }
 
 // Custom errors
@@ -179,7 +184,7 @@ func (h *HTTP) create(c *gin.Context) {
 	}
 
 	movie, err := h.svc.Create(c, model.Movie{
-		Seen:       false,
+		Seen:       "false",
 		Votes:      0,
 		Title:      r.Title,
 		Year:       r.Year,
@@ -228,9 +233,10 @@ func (h *HTTP) list(c *gin.Context) {
 		return
 	}
 
-	seen, err := strconv.ParseBool(c.Param("seen"))
+	seen, err := strconv.ParseBool(c.DefaultQuery("seen", "false"))
 	if err != nil {
-		seen = false
+		apperr.Response(c, err)
+		return
 	}
 
 	result, err := h.svc.List(c, seen, p.Transform())
@@ -300,17 +306,32 @@ func (h *HTTP) list(c *gin.Context) {
 // 	c.JSON(http.StatusOK, usr)
 // }
 
-// func (h *HTTP) delete(c *gin.Context) {
-// 	id, err := strconv.Atoi(c.Param("id"))
-// 	if err != nil {
-// 		apperr.Response(c, apperr.BadRequest)
-// 		return
-// 	}
+func (h *HTTP) vote(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		apperr.Response(c, apperr.BadRequest)
+		return
+	}
 
-// 	if err := h.svc.Delete(c, id); err != nil {
-// 		apperr.Response(c, err)
-// 		return
-// 	}
+	if err := h.svc.Vote(c, id); err != nil {
+		apperr.Response(c, err)
+		return
+	}
 
-// 	c.JSON(http.StatusOK, "Ok")
-// }
+	c.JSON(http.StatusOK, "Ok")
+}
+
+func (h *HTTP) delete(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		apperr.Response(c, apperr.BadRequest)
+		return
+	}
+
+	if err := h.svc.Delete(c, id); err != nil {
+		apperr.Response(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, "Ok")
+}
