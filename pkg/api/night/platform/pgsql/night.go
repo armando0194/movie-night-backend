@@ -53,7 +53,7 @@ func (u *MovieNight) List(db orm.DB, p *model.Pagination) ([]model.MovieNight, e
 // View returns single movie by ID
 func (u *MovieNight) View(db orm.DB, id int) (*model.MovieNight, error) {
 	var night = new(model.MovieNight)
-	sql := `SELECT * FROM "movies" WHERE ("night_movies"."id" = ? and deleted_at is null)`
+	sql := `SELECT * FROM "movie_nights" WHERE ("movie_nights"."id" = ? and deleted_at is null)`
 	_, err := db.QueryOne(night, sql, id)
 	if err != nil {
 		return nil, err
@@ -63,8 +63,8 @@ func (u *MovieNight) View(db orm.DB, id int) (*model.MovieNight, error) {
 }
 
 // Update updates user's info
-func (u *MovieNight) Update(db orm.DB, night *model.MovieNight) error {
-	return db.Update(night)
+func (u *MovieNight) Update(db orm.DB, night *model.MovieNight) (*model.MovieNight, error) {
+	return night, db.Update(night)
 }
 
 // Delete sets deleted_at for a user

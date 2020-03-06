@@ -2,6 +2,7 @@ package api
 
 import (
 	"crypto/sha1"
+	l "log"
 
 	"github.com/armando0194/movie-night-backend/pkg/api/movie"
 	"github.com/armando0194/movie-night-backend/pkg/api/night"
@@ -50,7 +51,13 @@ func Serve(cfg *config.Configuration) error {
 	ut.NewHTTP(ul.New(user.Initialize(db, rbac, sec), log), v1)
 	pt.NewHTTP(pl.New(password.Initialize(db, rbac, sec), log), v1)
 	mt.NewHTTP(ml.New(movie.Initialize(db), log), v1)
-	nt.NewHTTP(nl.New(night.Initialize(db), log), v1)
+	nt.NewHTTP(nl.New(night.Initialize(db, rbac), log), v1)
+
+	l.Println("Server Starting")
+	l.Printf("Port: %s", cfg.Server.Port)
+	l.Printf("Read: %d", cfg.Server.ReadTimeout)
+	l.Printf("Write: %d", cfg.Server.WriteTimeout)
+	l.Printf("Debug: %t", cfg.Server.Debug)
 
 	server.Start(e, &server.Config{
 		Port:                cfg.Server.Port,
@@ -58,7 +65,6 @@ func Serve(cfg *config.Configuration) error {
 		WriteTimeoutSeconds: cfg.Server.WriteTimeout,
 		Debug:               cfg.Server.Debug,
 	})
-
 	return nil
 }
 

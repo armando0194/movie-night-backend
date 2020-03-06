@@ -1,8 +1,6 @@
 package night
 
 import (
-	"fmt"
-
 	model "github.com/armando0194/movie-night-backend/pkg/utl/model"
 	"github.com/gin-gonic/gin"
 )
@@ -26,18 +24,17 @@ func (u *MovieNight) Delete(c *gin.Context, id int) error {
 	return u.mndb.Delete(u.db, movie)
 }
 
-func (u *MovieNight) AddHost(c *gin.Context, night_id int) error {
+func (u *MovieNight) AddHost(c *gin.Context, night_id int) (*model.MovieNight, error) {
 	movie, err := u.mndb.View(u.db, night_id)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	fmt.Printf("%#v", movie)
+
 	au := u.rbac.User(c)
-	fmt.Printf("%#v", au)
 	user, err := u.udb.View(u.db, au.ID)
-	fmt.Printf("%#v", user)
+
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	movie.UpdateHost(user)
@@ -45,11 +42,20 @@ func (u *MovieNight) AddHost(c *gin.Context, night_id int) error {
 	return u.mndb.Update(u.db, movie)
 }
 
-func (u *MovieNight) RSVP(c *gin.Context, id int) error {
+func (u *MovieNight) AddRSVP(c *gin.Context, id int) (*model.MovieNight, error) {
 	movie, err := u.mndb.View(u.db, id)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return u.mndb.Delete(u.db, movie)
+	au := u.rbac.User(c)
+	user, err := u.udb.View(u.db, au.ID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	movie.UpdateRSVP(user)
+
+	return u.mndb.Update(u.db, movie)
 }

@@ -15,6 +15,7 @@ import (
 // New instantates new Echo server
 func New() *gin.Engine {
 	e := gin.New()
+	gin.SetMode(gin.DebugMode)
 	e.Use(gin.Logger(), gin.Recovery(), secure.CORS(), secure.Headers())
 	e.GET("/", healthCheck)
 	return e
@@ -43,6 +44,7 @@ func Start(e *gin.Engine, cfg *Config) {
 
 	// Start server
 	go func() {
+		log.Println("Starting Listen and serve")
 		if err := s.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("listen: %s\n", err)
 		}

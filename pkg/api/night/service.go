@@ -15,17 +15,18 @@ type Service interface {
 	Create(*gin.Context, model.MovieNight) (*model.MovieNight, error)
 	List(*gin.Context, *model.Pagination) ([]model.MovieNight, error)
 	Delete(*gin.Context, int) error
-	AddHost(*gin.Context, int) error
+	AddHost(*gin.Context, int) (*model.MovieNight, error)
+	AddRSVP(*gin.Context, int) (*model.MovieNight, error)
 }
 
 // New creates new Movie application service
-func New(db *pg.DB, mndb MNDB, udb user.UDB) *MovieNight {
-	return &MovieNight{db: db, mndb: mndb}
+func New(db *pg.DB, mndb MNDB, udb user.UDB, rbac RBAC) *MovieNight {
+	return &MovieNight{db: db, mndb: mndb, udb: udb, rbac: rbac}
 }
 
 // Initialize initalizes Movie application service with defaults
-func Initialize(db *pg.DB) *MovieNight {
-	return New(db, pgsql.NewMovieNight(), user_psql.NewUser())
+func Initialize(db *pg.DB, rbac RBAC) *MovieNight {
+	return New(db, pgsql.NewMovieNight(), user_psql.NewUser(), rbac)
 }
 
 // Movie represents movie application service
@@ -41,7 +42,7 @@ type MNDB interface {
 	Create(orm.DB, model.MovieNight) (*model.MovieNight, error)
 	View(orm.DB, int) (*model.MovieNight, error)
 	List(orm.DB, *model.Pagination) ([]model.MovieNight, error)
-	Update(orm.DB, *model.MovieNight) error
+	Update(orm.DB, *model.MovieNight) (*model.MovieNight, error)
 	Delete(orm.DB, *model.MovieNight) error
 }
 

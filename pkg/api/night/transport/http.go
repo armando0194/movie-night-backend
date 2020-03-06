@@ -110,7 +110,7 @@ func NewHTTP(svc night.Service, er *gin.RouterGroup) {
 	//     "$ref": "#/responses/err"
 	//   "500":
 	//     "$ref": "#/responses/err"
-	// ur.PATCH("/:id", h.update)
+	ur.PUT("/rsvp/:night_id/", h.rsvp)
 
 	// swagger:operation DELETE /v1/users/{id} users userDelete
 	// ---
@@ -257,14 +257,32 @@ func (h *HTTP) host(c *gin.Context) {
 	}
 
 	fmt.Println(night_id)
-	err = h.svc.AddHost(c, night_id)
+	movie, err := h.svc.AddHost(c, night_id)
 
 	if err != nil {
 		apperr.Response(c, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, night_id)
+	c.JSON(http.StatusOK, movie)
+}
+
+func (h *HTTP) rsvp(c *gin.Context) {
+	nightID, err := strconv.Atoi(c.Param("night_id"))
+	if err != nil {
+		apperr.Response(c, apperr.BadRequest)
+		return
+	}
+
+	fmt.Println(nightID)
+	movie, err := h.svc.AddRSVP(c, nightID)
+
+	if err != nil {
+		apperr.Response(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, movie)
 }
 
 func (h *HTTP) delete(c *gin.Context) {
