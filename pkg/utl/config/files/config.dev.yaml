@@ -3,7 +3,7 @@ database:
   psn: "postgres://armando:dev@localhost:5432/movie"
 
 server:
-  port: :8080
+  port: :8081
   debug: true
   read_timeout_seconds: 15
   write_timeout_seconds: 20
